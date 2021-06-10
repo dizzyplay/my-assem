@@ -2,15 +2,22 @@ use std::collections::HashMap;
 use std::env;
 use std::fs::OpenOptions;
 
-mod Symbol;
+mod Parser;
 
-fn main() {
+fn main() -> Result<(),std::io::Error> {
     // read file
     let file_name = env::args().collect::<Vec<String>>();
-    println!("{:?}",file_name);
-    let mut symbol_table = Symbol::SymbolTable::new();
-
-    println!("{:?}",symbol_table.get("R15"));
+    println!("{:?}",file_name[1].as_str());
+    let mut parser = Parser::Parser::new(file_name[1].as_str())?;
+    loop{
+        match parser.advance() {
+            Some(s) => {
+                println!("{:?}",s)
+            },
+            None => break
+        }
+    }
+    Ok(())
 }
 
 
