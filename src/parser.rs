@@ -48,10 +48,52 @@ impl Parser {
             panic!("not valid command")
         }
     }
-    pub fn symbol() {}
-    pub fn dest() {}
+    pub fn symbol(&self) -> String {
+        // return @i -> i @1 -> 1 (loop) -> loop
+        if self.command_type() == "A_COMMAND" || self.command_type() == "L_COMMAND" {
+            let mut s = String::from(self.current.as_ref().unwrap());
+            s.retain(|c| c != '@' && c != '(' && c != ')');
+            return s;
+        }
+        String::from("")
+    }
+    pub fn dest(&self) -> String {
+        if self.command_type() == "C_COMMAND" && self.current.as_ref().unwrap().contains("=") {
+            let r = self.current.as_ref().unwrap().splitn(2,'=').collect::<Vec<&str>>();
+            let mut result:usize = 0;
+            if r[0].contains("A") {
+                result += 4;
+            }
+            if r[0].contains("M") {
+                result += 1;
+            }
+            if r[0].contains("D") {
+                result += 2;
+            }
+            return format!("{:03b}",result);
+        }
+        String::from("")
+    }
     pub fn comp() {}
     pub fn jump() {}
+}
+
+#[test]
+fn dest_test(){
+    let mut p = Parser::new("./Add.asm").unwrap();
+    p.advance();
+    assert_eq!(p.dest(), String::from(""));
+    p.advance();
+    // D=A -> 010
+    assert_eq!(p.dest(), String::from("010"));
+    p.advance();
+    p.advance();
+    //D=D+A -> 010
+    assert_eq!(p.dest(), String::from("010"));
+    p.advance();
+    p.advance();
+    //M=D -> 001
+    assert_eq!(p.dest(), String::from("001"));
 }
 
 #[test]
@@ -69,4 +111,13 @@ fn command_test() {
     assert_eq!(p.command_type(), String::from("A_COMMAND"));
     p.advance();
     assert_eq!(p.command_type(), String::from("C_COMMAND"));
+}
+
+#[test]
+fn symbol_test(){
+    let mut p = Parser::new("./Add.asm").unwrap();
+    p.advance();
+    assert_eq!(p.symbol(), String::from("2"));
+    p.advance();
+    assert_eq!(p.symbol(), String::from(""));
 }
