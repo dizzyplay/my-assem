@@ -1,5 +1,5 @@
-use std::fs::{File};
-use std::io::{Error, Read, BufReader, BufRead};
+use std::fs::File;
+use std::io::{BufRead, BufReader, Error, Read};
 
 pub struct Parser {
     file: BufReader<File>,
@@ -10,12 +10,10 @@ impl Parser {
     pub fn new(filename: &str) -> Result<Self, Error> {
         let f = File::open(filename)?;
         let f = BufReader::new(f);
-        Ok(
-            Parser {
-                file: f,
-                current: None,
-            }
-        )
+        Ok(Parser {
+            file: f,
+            current: None,
+        })
     }
 
     pub fn advance(&mut self) -> Option<String> {
@@ -30,7 +28,7 @@ impl Parser {
                         return Some(s.clone());
                     }
                 }
-                None => break
+                None => break,
             }
         }
         None
@@ -40,9 +38,15 @@ impl Parser {
             String::from("A_COMMAND")
         } else if self.current.as_ref().unwrap().starts_with("(") {
             String::from("L_COMMAND")
-        } else if self.current.as_ref().unwrap().chars().all(
-            |c| c.is_alphabetic() || c == '-' || c == '+' || c == '=' || c == '|' || c == '!' || c == '&'
-        ) {
+        } else if self.current.as_ref().unwrap().chars().all(|c| {
+            c.is_alphabetic()
+                || c == '-'
+                || c == '+'
+                || c == '='
+                || c == '|'
+                || c == '!'
+                || c == '&'
+        }) {
             String::from("C_COMMAND")
         } else {
             panic!("not valid command")
@@ -92,23 +96,24 @@ fn dest_comp_jump_test(){
     assert_eq!(p.dest(), String::from(""));
     assert_eq!(p.comp(), String::from(""));
     assert_eq!(p.jump(), String::from(""));
+
     p.advance();
-    // D=A -> 010
+    // D=A
     assert_eq!(p.dest(), String::from("D"));
     assert_eq!(p.comp(), String::from("A"));
     assert_eq!(p.jump(), String::from(""));
     p.advance();
     p.advance();
-    //D=D+A -> 010
+    //D=D+A
     assert_eq!(p.dest(), String::from("D"));
     assert_eq!(p.comp(), String::from("D+A"));
     assert_eq!(p.jump(), String::from(""));
     p.advance();
     p.advance();
-    //M=D -> 001
+    //M=D
     assert_eq!(p.dest(), String::from("M"));
     assert_eq!(p.comp(), String::from("D"));
-    // assert_eq!(p.jump(), String::from(""));
+    assert_eq!(p.jump(), String::from(""));
 }
 
 #[test]
@@ -129,7 +134,7 @@ fn command_test() {
 }
 
 #[test]
-fn symbol_test(){
+fn symbol_test() {
     let mut p = Parser::new("./Add.asm").unwrap();
     p.advance();
     assert_eq!(p.symbol(), String::from("2"));
