@@ -60,40 +60,55 @@ impl Parser {
     pub fn dest(&self) -> String {
         if self.command_type() == "C_COMMAND" && self.current.as_ref().unwrap().contains("=") {
             let r = self.current.as_ref().unwrap().splitn(2,'=').collect::<Vec<&str>>();
-            let mut result:usize = 0;
-            if r[0].contains("A") {
-                result += 4;
-            }
-            if r[0].contains("M") {
-                result += 1;
-            }
-            if r[0].contains("D") {
-                result += 2;
-            }
-            return format!("{:03b}",result);
+            return String::from(r[0]);
         }
         String::from("")
     }
-    pub fn comp() {}
-    pub fn jump() {}
+    pub fn comp(&self) -> String{
+        if self.command_type() == "C_COMMAND" {
+            if let Some(rest) = self.current.as_ref().unwrap().splitn(2,'=').last() {
+                let result = rest.splitn(2,';').collect::<Vec<&str>>();
+                return String::from(result[0]);
+            }
+        }
+        String::from("")
+    }
+    pub fn jump(&self) -> String {
+        if self.command_type() == "C_COMMAND" {
+            if self.current.as_ref().unwrap().contains(";") {
+                if let Some(rest) = self.current.as_ref().unwrap().splitn(2, ";").last(){
+                    return String::from(rest);
+                }
+            }
+        }
+        String::from("")
+    }
 }
 
 #[test]
-fn dest_test(){
+fn dest_comp_jump_test(){
     let mut p = Parser::new("./Add.asm").unwrap();
     p.advance();
     assert_eq!(p.dest(), String::from(""));
+    assert_eq!(p.comp(), String::from(""));
+    assert_eq!(p.jump(), String::from(""));
     p.advance();
     // D=A -> 010
-    assert_eq!(p.dest(), String::from("010"));
+    assert_eq!(p.dest(), String::from("D"));
+    assert_eq!(p.comp(), String::from("A"));
+    assert_eq!(p.jump(), String::from(""));
     p.advance();
     p.advance();
     //D=D+A -> 010
-    assert_eq!(p.dest(), String::from("010"));
+    assert_eq!(p.dest(), String::from("D"));
+    assert_eq!(p.comp(), String::from("D+A"));
+    assert_eq!(p.jump(), String::from(""));
     p.advance();
     p.advance();
     //M=D -> 001
-    assert_eq!(p.dest(), String::from("001"));
+    assert_eq!(p.dest(), String::from("M"));
+    assert_eq!(p.comp(), String::from("D"));
+    // assert_eq!(p.jump(), String::from(""));
 }
 
 #[test]
