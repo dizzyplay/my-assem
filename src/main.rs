@@ -1,6 +1,7 @@
 use std::env;
 
 mod parser;
+mod code;
 
 fn main() -> Result<(),std::io::Error> {
     // read file
