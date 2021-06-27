@@ -1,4 +1,4 @@
-fn dest(symbol: String) -> String {
+pub fn dest(symbol: String) -> String {
     let mut code = 0;
     if symbol.contains("M") {
         code += 1;
@@ -14,7 +14,7 @@ fn dest(symbol: String) -> String {
     // https://stackoverflow.com/questions/50458144/what-is-the-easiest-way-to-pad-a-string-with-0-to-the-left
 }
 
-fn comp(symbol:String) -> String {
+pub fn comp(symbol:String) -> String {
     match symbol.as_str() {
         "0" => format!("0101010"),
         "1" => format!("0111111"),
@@ -48,7 +48,7 @@ fn comp(symbol:String) -> String {
     }
 }
 
-fn jump(symbol:String)->String{
+pub fn jump(symbol:String)->String{
     match symbol.as_str(){
         "" => format!("000"),
         "M" => format!("001"),
