@@ -20,12 +20,13 @@ impl Parser {
         loop {
             match self.file.by_ref().lines().next() {
                 Some(s) => {
-                    let s = s.unwrap();
+                    let mut s = s.unwrap();
                     if s.starts_with("//") || s.is_empty() {
                         continue;
                     } else {
-                        self.current = Some(String::from(s.clone().trim_start()));
-                        return Some(s.clone());
+                        s.retain(|c|!c.is_whitespace());
+                        self.current = Some(s.clone());
+                        return Some(s);
                     }
                 }
                 None => break,
