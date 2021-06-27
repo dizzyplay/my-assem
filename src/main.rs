@@ -21,12 +21,13 @@ fn main() -> Result<(),std::io::Error> {
                     one_line_assembly.push_str("0");
                     one_line_assembly.push_str(format!("{:0>15b}", parser.symbol().parse::<usize>().unwrap()).as_str());
                 }else if parser.command_type() == "C_COMMAND" {
-                    let dest = code::dest(parser.dest());
                     let comp = code::comp(parser.comp());
+                    let dest = code::dest(parser.dest());
                     let jump = code::jump(parser.jump());
+                    println!("{} {} {}",dest, comp, jump);
                     one_line_assembly.push_str("111");
-                    one_line_assembly.push_str(dest.as_str());
                     one_line_assembly.push_str(comp.as_str());
+                    one_line_assembly.push_str(dest.as_str());
                     one_line_assembly.push_str(jump.as_str());
                 }else if parser.command_type() == "L_COMMAND" {
                     // 심볼테이블에서 찾기
