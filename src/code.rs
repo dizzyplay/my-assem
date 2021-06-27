@@ -48,6 +48,32 @@ fn comp(symbol:String) -> String {
     }
 }
 
+fn jump(symbol:String)->String{
+    match symbol.as_str(){
+        "" => format!("000"),
+        "M" => format!("001"),
+        "D" => format!("010"),
+        "DM" => format!("011"),
+        "A" => format!("100"),
+        "AM" => format!("101"),
+        "AD" => format!("110"),
+        "ADM" => format!("111"),
+        _ => panic!("wrong symbol")
+    }
+}
+
+#[test]
+fn jump_test(){
+    assert_eq!(jump(format!("")), "000");
+    assert_eq!(jump(format!("M")), "001");
+    assert_eq!(jump(format!("D")), "010");
+    assert_eq!(jump(format!("DM")), "011");
+    assert_eq!(jump(format!("A")), "100");
+    assert_eq!(jump(format!("AM")), "101");
+    assert_eq!(jump(format!("AD")), "110");
+    assert_eq!(jump(format!("ADM")), "111");
+}
+
 #[test]
 fn comp_test(){
     assert_eq!(comp(format!("0")),"0101010");
