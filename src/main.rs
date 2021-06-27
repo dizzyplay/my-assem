@@ -9,13 +9,13 @@ fn main() -> Result<(),std::io::Error> {
     // read file
     let file_name = env::args().collect::<Vec<String>>();
     let file_name = file_name[1].as_str();
-    println!("{:?}",file_name);
+    println!("Assembling -> {}",file_name);
     let mut parser = parser::Parser::new(file_name)?;
     let mut hack = String::new();
     loop{
         let mut one_line_assembly = String::new();
         match parser.advance() {
-            Some(s) => {
+            Some(_) => {
                 if parser.command_type() == "A_COMMAND" {
                     // 숫자면 바로 2진수로
                     one_line_assembly.push_str("0");
@@ -24,7 +24,6 @@ fn main() -> Result<(),std::io::Error> {
                     let comp = code::comp(parser.comp());
                     let dest = code::dest(parser.dest());
                     let jump = code::jump(parser.jump());
-                    println!("{} {} {}",dest, comp, jump);
                     one_line_assembly.push_str("111");
                     one_line_assembly.push_str(comp.as_str());
                     one_line_assembly.push_str(dest.as_str());
