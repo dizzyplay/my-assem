@@ -79,9 +79,21 @@ fn insert_variable(){
     assert_eq!(s.get(format!("x")), 16);
     s.insert(format!("x"),None);
     assert_eq!(s.get(format!("x")), 16);
-    
+
     s.insert(format!("y"),None);
     assert_eq!(s.get(format!("y")), 17);
     s.insert(format!("y"),None);
     assert_eq!(s.get(format!("y")), 17);
+}
+
+#[test]
+fn insert_label(){
+    let mut s = SymbolTable::new();
+    s.insert(format!("LOOP"),Some(1));
+    assert_eq!(s.get(format!("LOOP")), 1);
+    s.insert(format!("LOOP"),Some(1));
+    assert_eq!(s.get(format!("LOOP")), 1);
+
+    s.insert(format!("END"),Some(10));
+    assert_eq!(s.get(format!("END")), 10);
 }
