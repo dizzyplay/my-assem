@@ -4,6 +4,7 @@ use std::io::Write;
 
 mod parser;
 mod code;
+mod symbol_table;
 
 fn main() -> Result<(),std::io::Error> {
     // read file
