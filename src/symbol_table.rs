@@ -1,12 +1,13 @@
 use std::collections::HashMap;
 
-struct SymbolTable {
+#[derive(Debug)]
+pub struct SymbolTable {
     table: HashMap<String, usize>,
     variable_cursor: usize,
 }
 
 impl SymbolTable {
-    fn new() -> Self {
+    pub fn new() -> Self {
         let mut table = HashMap::new();
         for n in 0..16 {
             table.insert(format!("R{}", n), n);
@@ -24,19 +25,28 @@ impl SymbolTable {
             variable_cursor: 16,
         }
     }
-    fn insert(&mut self, symbol:String, address:Option<usize>) {
+    pub fn insert(&mut self, symbol:String, address:Option<usize>) {
+        match self.table.get(symbol.as_str()) {
+            Some(_) => {
+                return;
+            },
+            None => {}
+        }
         match address{
             Some(s) =>{
                 if symbol.matches(char::is_lowercase).collect::<Vec<&str>>().len() == 0 {
-                    println!("{:?}",symbol);
-                    println!("{:?}",symbol.matches(char::is_lowercase).collect::<Vec<&str>>());
                     self.table.insert(symbol, s);
                 } else{
-                    panic!("not allowed lowercase in label symbol..!")
+                    panic!("not allowed lowercase in label symbol..! {}", symbol)
                 }
             },
             None => {
-                if symbol.matches(char::is_uppercase).collect::<Vec<&str>>().len() == 0 {
+                if symbol.matches(|c|{
+                    if char::is_lowercase(c) || c == '_' {
+                        return true;
+                    }
+                    false
+                }).collect::<Vec<&str>>().len() == symbol.len() {
                     match self.table.get(symbol.as_str()) {
                         Some(_) => { },
                         None => {
@@ -45,12 +55,12 @@ impl SymbolTable {
                         }
                     }
                 }else {
-                    panic!("not allowed uppercase in variable symbol..!")
+                    panic!("not allowed uppercase in variable symbol..! {}", symbol)
                 }
             }
         };
     }
-    fn get(&self, symbol:String) -> usize {
+    pub fn get(&self, symbol:String) -> usize {
         match self.table.get(symbol.as_str()) {
             Some(n) => *n,
             None => 0

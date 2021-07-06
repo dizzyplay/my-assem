@@ -25,8 +25,9 @@ impl Parser {
                         continue;
                     } else {
                         s.retain(|c|!c.is_whitespace());
-                        self.current = Some(s.clone());
-                        return Some(s);
+                        let rest = s.splitn(2, "//").collect::<Vec<&str>>();
+                        self.current = Some(rest[0].to_string().clone());
+                        return Some(rest[0].to_string());
                     }
                 }
                 None => break,
@@ -40,13 +41,14 @@ impl Parser {
         } else if self.current.as_ref().unwrap().starts_with("(") {
             String::from("L_COMMAND")
         } else if self.current.as_ref().unwrap().chars().all(|c| {
-            c.is_alphabetic()
+            c.is_alphanumeric()
                 || c == '-'
                 || c == '+'
                 || c == '='
                 || c == '|'
                 || c == '!'
                 || c == '&'
+                || c == ';'
         }) {
             String::from("C_COMMAND")
         } else {
