@@ -40,7 +40,7 @@ fn main() -> Result<(), std::io::Error> {
         match parser.advance() {
             Some(_) => {
                 if parser.command_type() == "A_COMMAND" {
-                    let mut variable:usize;
+                    let variable:usize;
                     if parser.symbol().chars().all(char::is_numeric) {
                         // 숫자면 바로 2진수로
                         variable = parser.symbol().parse::<usize>().unwrap();
