@@ -16,17 +16,16 @@ fn main() -> Result<(), std::io::Error> {
     let mut hack = String::new();
 
     let mut symbol_table = symbol_table::SymbolTable::new();
-    let mut line: usize = 1;
+    let mut line: usize = 0;
     loop {
         match one_pass_parser.advance() {
             Some(_) => {
                 if one_pass_parser.command_type() == "L_COMMAND" {
-                    symbol_table.insert(one_pass_parser.symbol(), Some(line + 1));
-                } else if one_pass_parser.command_type() == "A_COMMAND" && one_pass_parser.symbol().chars().all(|c|{
-                    if c.is_lowercase() || c == '_'  {
-                        return true;
-                    }
-                    false
+                    symbol_table.insert(one_pass_parser.symbol(), Some(line));
+                    continue;
+                } else if one_pass_parser.command_type() == "A_COMMAND" && one_pass_parser.symbol().chars().all(|c| {
+                    if c.is_lowercase() || c == '_' { true }
+                    else { false }
                 }) {
                     symbol_table.insert(one_pass_parser.symbol(), None);
                 }
@@ -40,11 +39,11 @@ fn main() -> Result<(), std::io::Error> {
         match parser.advance() {
             Some(_) => {
                 if parser.command_type() == "A_COMMAND" {
-                    let variable:usize;
+                    let variable: usize;
                     if parser.symbol().chars().all(char::is_numeric) {
                         // 숫자면 바로 2진수로
                         variable = parser.symbol().parse::<usize>().unwrap();
-                    }else {
+                    } else {
                         variable = symbol_table.get(parser.symbol());
                     }
                     one_line_assembly.push_str("0");
